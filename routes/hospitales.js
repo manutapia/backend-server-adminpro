@@ -1,33 +1,31 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
-
+const Hospital = require('../models/hospital')
 const mdAutenticacion = require('../moddlewares/autenticacion');
 
 const app = express();
-const Usuario = require('../models/usuario')
 
 app.get('/', (req, res) => {
     let desde = req.query.desde || 0;
     desde = Number(desde)
-    Usuario.find({}, 'nombre email img role')
+    Hospital.find({})
         .skip(desde)
         .limit(5)
-        .exec((err, usuarios) => {
+        .populate('usuario', 'nombre email')
+        .exec((err, hospitalesDB) => {
             if (err) {
                 return res.status(500).json({
                     ok: false,
-                    mensaje: 'Error cargando usuario',
+                    mensaje: 'Error cargando hospitales',
                     errors: err
                 })
             }
-            Usuario.count({}, (err, conteo) => {
+            Hospital.count({}, (err, conteo) => {
                 res.status(200).json({
                     ok: true,
-                    usuarios,
+                    hospitalesDB,
                     total: conteo
                 });
             })
-
         })
 })
 
@@ -35,38 +33,37 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
     const id = req.params.id;
     const body = req.body;
 
-    Usuario.findById(id, (err, usuarioDB) => {
+    Hospital.findById(id, (err, hospitalDB) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Error al buscar usuario',
+                mensaje: 'Error al buscar hospital',
                 errors: err
             })
         };
-        if (!usuarioDB) {
+        if (!hospitalDB) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'No existe un usuario con el id: ' + id,
-                errors: { message: 'no existe ningun usuario con ese id' }
+                mensaje: 'No existe un hospital con el id: ' + id,
+                errors: { message: 'no existe ningun hospital con ese id' }
             })
         };
 
-        usuarioDB.nombre = body.nombre;
-        usuarioDB.email = body.email;
-        usuarioDB.role = body.role;
+        hospitalDB.nombre = body.nombre;
+        hospitalDB.usuario = req.usuario._id;
 
-        usuarioDB.save((err, usuarioGuardado) => {
+        hospitalDB.save((err, hospitalGuardado) => {
             if (err) {
                 return res.status(400).json({
                     ok: false,
-                    mensaje: 'Error al actualizar el usuario',
+                    mensaje: 'Error al actualizar el hospital',
                     errors: err
                 })
             };
 
             res.status(200).json({
                 ok: true,
-                usuario: usuarioGuardado
+                hospital: hospitalGuardado
             })
         })
     })
@@ -74,51 +71,47 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
 
 app.post('/', mdAutenticacion.verificaToken, (req, res) => {
     const body = req.body;
-    console.log(body);
-    const usuario = new Usuario({
+
+    const hospital = new Hospital({
         nombre: body.nombre,
-        email: body.email,
-        password: bcrypt.hashSync(body.password, 10),
-        role: body.role
+        usuario: req.usuario._id
     });
 
-    usuario.save((err, usuarioGuardado) => {
+    hospital.save((err, hospitalGuardado) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'Error al crear usuario',
+                mensaje: 'Error al crear el hospital',
                 errors: err
             })
         }
-
         res.status(201).json({
             ok: true,
-            usuario: usuarioGuardado,
-            usuarioToken: req.usuario
+            hospital: hospitalGuardado
         })
     })
-})
+});
 
 app.delete('/:id', mdAutenticacion.verificaToken, (req, res) => {
     const id = req.params.id;
-    Usuario.findOneAndRemove(id, (err, usuarioBorrado) => {
+    Hospital.findOneAndRemove(id, (err, hospitalBorrado) => {
         if (err) {
             return res.status(500).json({
                 ok: false,
-                mensaje: 'Error al borrar usuario',
+                mensaje: 'Error al borrar hospital',
                 errors: err
             })
         }
-        if (!usuarioBorrado) {
+        if (!hospitalBorrado) {
             return res.status(400).json({
                 ok: false,
-                mensaje: 'No existe un usuario con ese id',
-                errors: { message: 'no existe ningun usuario con ese id' }
+                mensaje: 'No existe un hospital con ese id',
+                errors: { message: 'no existe ningun hospital con ese id' }
             })
         }
         res.status(200).json({
             ok: true,
-            usuario: usuarioBorrado
+            hospital: hospitalBorrado
         })
     })
 })

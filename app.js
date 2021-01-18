@@ -8,6 +8,11 @@ let app = express();
 let appRoutes = require('./routes/app');
 let usuarioRoutes = require('./routes/usuarios');
 let loginRoutes = require('./routes/login')
+let hospitalRoutes = require('./routes/hospitales')
+let medicoRoutes = require('./routes/medicos');
+let busquedaRoutes = require('./routes/busqueda');
+let uploadRoutes = require('./routes/upload');
+let imagenesRoutes = require('./routes/imagenes')
 
 // Conexión a la base de datos
 const options = {
@@ -20,12 +25,22 @@ mongoose.connect('mongodb://localhost:27017/hospitalDB', options, (err, res) => 
     console.log('Base de datos:  \x1b[32m%s\x1b[0m', 'online');
 });
 
+// Serve index config
+// const serveIndex = require('serve-index');
+// app.use(express.static(__dirname + '/'));
+// app.use('/uploads', serveIndex(__dirname + '/uploads'))
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Rutas
 app.use('/usuarios', usuarioRoutes);
 app.use('/login', loginRoutes);
+app.use('/hospitales', hospitalRoutes);
+app.use('/medicos', medicoRoutes);
+app.use('/busqueda', busquedaRoutes)
+app.use('/upload', uploadRoutes);
+app.use('/img', imagenesRoutes);
 app.use('/', appRoutes);
 
 
