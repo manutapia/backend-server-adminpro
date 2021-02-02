@@ -1,2 +1,3 @@
 module.exports.SEED = 'este-es-un-seed';
-module.exports.CLIENT_ID = "663488698318-1fn6t2rh2jdvcl6qeuqp4k359a2gmv9a.apps.googleusercontent.com"
+//TODO: Agregar google-signin-client_id para utilizar la herramienta de autenticación de google. 
+module.exports.CLIENT_ID = "<YOUR_CLIENT_ID>.apps.googleusercontent.com"
