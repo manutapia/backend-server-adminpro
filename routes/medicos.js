@@ -1,5 +1,5 @@
 const express = require('express')
-const mdAutenticacion = require('../moddlewares/autenticacion');
+const mdAutenticacion = require('../middlewares/autenticacion');
 const Medico = require('../models/medico');
 
 const app = express();

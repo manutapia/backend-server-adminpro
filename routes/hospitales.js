@@ -1,6 +1,6 @@
 const express = require('express');
 const Hospital = require('../models/hospital')
-const mdAutenticacion = require('../moddlewares/autenticacion');
+const mdAutenticacion = require('../middlewares/autenticacion');
 
 const app = express();
 

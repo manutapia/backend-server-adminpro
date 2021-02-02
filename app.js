@@ -1,10 +1,10 @@
 // Requires
 let express = require("express");
-let bodyParser = require('body-parser')
+let bodyParser = require('body-parser');
+let cors = require('cors')
 let mongoose = require("mongoose");
 
 // Inicializar variables
-let app = express();
 let appRoutes = require('./routes/app');
 let usuarioRoutes = require('./routes/usuarios');
 let loginRoutes = require('./routes/login')
@@ -29,6 +29,10 @@ mongoose.connect('mongodb://localhost:27017/hospitalDB', options, (err, res) => 
 // const serveIndex = require('serve-index');
 // app.use(express.static(__dirname + '/'));
 // app.use('/uploads', serveIndex(__dirname + '/uploads'))
+
+let app = express();
+
+app.use(cors())
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

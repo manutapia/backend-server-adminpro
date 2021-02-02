@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 
-const mdAutenticacion = require('../moddlewares/autenticacion');
+const mdAutenticacion = require('../middlewares/autenticacion');
 
 const app = express();
 const Usuario = require('../models/usuario')
@@ -72,7 +72,8 @@ app.put('/:id', mdAutenticacion.verificaToken, (req, res) => {
     })
 })
 
-app.post('/', mdAutenticacion.verificaToken, (req, res) => {
+// mdAutenticacion.verificaToken
+app.post('/', (req, res) => {
     const body = req.body;
     console.log(body);
     const usuario = new Usuario({
